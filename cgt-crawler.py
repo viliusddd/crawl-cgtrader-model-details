@@ -1,6 +1,7 @@
 import urllib3
 from bs4 import BeautifulSoup
 import csv
+import os
 import re
 
 class Crawl():
@@ -22,12 +23,15 @@ class Crawl():
         return self.sriuba().find('span', class_='product_id').string
 
     def polys(self):
-        a = self.sriuba().findAll("ul", {"class": "details-box__list"})[1].findAll('span')[9].string
+        a = self.sriuba().findAll("ul", {"class": "details-box__list"})[1].findAll('span')[-7].string
         print ("=>", a)
         if a == None:
             return str(0)
         else:
             return a
+
+    def name(self):
+        return self.sriuba().find('span', class_='name').string
 
     def write_csv(self, items):
         fileName = "sarasas.csv"
@@ -42,18 +46,19 @@ class Crawl():
         print(re.search(regex, title))
         return re.search(regex, title).group(1)
 
-    def strip(self, title):
-        regex = re.compile(r'(?:^)(.*)((?:(?: 3D asset )|(?: 3D model )|( ))(?:\| CGTrader))')
-        return self.__regexSearch(title,regex)
+    def add_commas(self, link):
+        link = "{}".format(link)
+        print(link)
 
 
-links = ()
-number = int(80)
+links = ("""
+put your links in here
+""")
+links = links.split("\n")
+links = list(filter(bool, links))
 
+number = int(165)
 for l in links:
-    
     crl = Crawl(l)
-    #print(crl.id() + crl.strip(crl.title()) + "\t\t\t\t\t\t")
-    #crl.write_csv(crl.strip(crl.title()) + "\n")
-    crl.write_csv(str(number) + "\t" + l + "\t" + crl.id() + "\t" + crl.strip(crl.title()) + "\t\t\t\t\t\t"+ crl.polys() + "\n")
+    crl.write_csv(str(number) + "\t" + l + "\t" + crl.id() + "\t" + crl.name() + "\t\t\t\t\t\t"+ crl.polys() + "\n")
     number += int(1)
